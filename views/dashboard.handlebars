@@ -1,0 +1,71 @@
+<div id="main-container">
+    <div id="left-side">
+
+        <div class="menu" id="contact-menu">
+            <div class="user-details">
+                <img src={{userImage}} class="profile-img" />
+                <h3>{{userName}}</h3>
+            </div>
+            <button><a href="/auth/logout">logout</a></button>
+        </div>
+        <div id="search">
+            <input type="text" placeholder="Search" id="search-input" />
+        </div>
+
+
+        <div id="contacts">
+            <ul class="contact-list">
+                {{#each allUsers}}
+                <li class="contact-item">
+                    <a href="#{{../userId}}AND{{_id}}" class="contact-link user-details">
+                        <img src={{image}} class="profile-img">
+                        <p class="username">{{displayName}}</p>
+                    </a>
+                </li>
+
+                {{/each}}
+
+                {{!-- <li class="contact-item">
+                    <a href="#" class="contact-link user-details">
+                        <img src={{userImage}} class="profile-img">
+                        <p class="username">Joseph</p>
+                    </a>
+                </li> --}}
+
+
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="right-side" id="{{userId}}AND">
+        <div class="menu" id="user-menu">
+            <div class="user-details">
+                <img src={{userImage}} class="profile-img" id="recipient-image" />
+                <h3 id="recipient-username">{{userName}}</h3>
+            </div>
+        </div>
+
+        <div id="chat">
+            {{!-- <div class="message">
+                <div class="message-info">
+                    {{userName}} <span>09:30am</span>
+                </div>
+                <div class="message-text">
+                    How are you doing today?
+                </div>
+            </div> --}}
+
+
+        </div>
+
+
+        <div class="chat-form-container">
+            <form id="chat-form">
+                <input id="msg" type="text" placeholder="Enter Message" autocomplete="off" required />
+                <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
+            </form>
+        </div>
+
+    </div>
+</div>
