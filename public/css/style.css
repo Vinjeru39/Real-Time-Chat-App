@@ -1,9 +1,10 @@
 :root {
   --clr-primary: #b9faef;
   --clr-secondary: #509bd9;
-  --clr-accent: #646c75;
+  --clr-accent: hsl(212, 8%, 43%);
   --clr-light-grey: #dfe2e6;
   --clr-light-blue: #e6e9ff;
+  --clr-sender-message: #dcf8c6;
   --clr-dark-blue: #7386ff;
 }
 
@@ -158,4 +159,9 @@ body {
   padding: 5px;
   height: 40px;
   flex: 1;
+}
+
+.sender-message {
+  background-color: var(--clr-sender-message);
+  margin-left: 20px;
 }

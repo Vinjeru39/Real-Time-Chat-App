@@ -3,14 +3,20 @@ const chatMessages = document.getElementById("chat");
 const chatLink = document.getElementsByClassName("contact-link");
 
 const socket = io();
+let userId;
+let recepientId;
 
 for (let i = 0; i < chatLink.length; i++) {
   chatLink[i].addEventListener("click", function () {
+    if (document.getElementById("msg").hasAttribute("disabled")) {
+      document.getElementById("msg").removeAttribute("disabled");
+      document.getElementById("submit-btn").removeAttribute("disabled");
+    }
     let room = this.getAttribute("href");
     let parts = room.split("AND");
     parts[0] = parts[0].split("").slice(1).join("");
-    const userId = parts[0];
-    const recepientId = parts[1];
+    userId = parts[0];
+    recepientId = parts[1];
     if (parts[0] > parts[1]) {
       room = parts[1] + "AND" + parts[0];
     } else {
@@ -19,20 +25,28 @@ for (let i = 0; i < chatLink.length; i++) {
 
     //join a Room
     socket.emit("joinRoom", { userId, recepientId, room });
-    clearChat();
+    //clear chat
+    chatMessages.innerHTML = "";
   });
 }
 
-socket.on("message", (message) => {
-  outputMessage(message);
+socket.on("message", ({ message, sentId }) => {
+  outputMessage(message, sentId);
 
   //Scroll down
   chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
 socket.on("recepientInfo", ({ userImage, userName }) => {
-  document.getElementById("recipient-image").src = userImage;
-  document.getElementById("recipient-username").innerText = userName;
+  document.getElementById("recepient-image").src = userImage;
+  document.getElementById("recepient-username").innerText = userName;
+});
+
+socket.on("initialMessages", ({ messages }) => {
+  messages.forEach((message) => {
+    createMessage(message);
+  });
+  chatMessages.scrollTop = chatMessages.scrollHeight;
 });
 
 //Message submit
@@ -47,15 +61,36 @@ chatForm.addEventListener("submit", (e) => {
   e.target.elements.msg.focus();
 });
 
-function clearChat() {
-  chatMessages.innerHTML = "";
+//for initial messages in the database
+function createMessage(message) {
+  const div = document.createElement("div");
+  let displayName = message.senderName;
+
+  div.classList.add("message");
+  if (message.sender === userId) {
+    div.classList.add("sender-message");
+    displayName = "ME";
+  }
+  div.innerHTML = `<div class="message-info">${displayName} <span>${moment(
+    message.createdAt
+  ).format("h:mm a")}</span></div>
+      <div class="message-text">
+        ${message.text}
+      </div>`;
+  chatMessages.appendChild(div);
 }
 
 //Output message to DOM
-function outputMessage(message) {
+function outputMessage(message, sentId) {
   const div = document.createElement("div");
+  let displayName = message.username;
+
   div.classList.add("message");
-  div.innerHTML = `<div class="message-info">${message.username} <span>${message.time}</span></div>
+  if (sentId === userId) {
+    div.classList.add("sender-message");
+    displayName = "ME";
+  }
+  div.innerHTML = `<div class="message-info">${displayName} <span>${message.time}</span></div>
       <div class="message-text">
         ${message.text}
       </div>`;

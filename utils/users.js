@@ -15,7 +15,6 @@ function getCurrentUser(socketid) {
 //User leaves caht
 function userLeave(socketid) {
   const index = users.findIndex((user) => user.socketid === socketid);
-
   if (index !== -1) {
     return users.splice(index, 1)[0];
   }

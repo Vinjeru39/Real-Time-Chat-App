@@ -14,6 +14,8 @@ const socketio = require("socket.io");
 const connectDB = require("./config/db");
 const formatMessage = require("./utils/messages");
 const User = require("./models/User");
+const Message = require("./models/Message");
+const Room = require("./models/Room");
 const {
   userJoin,
   getCurrentUser,
@@ -68,8 +70,11 @@ app.use("/auth", require("./routes/auth"));
 io.on("connection", (socket) => {
   socket.on("joinRoom", async ({ userId, recepientId, room }) => {
     if (getCurrentUser(socket.id)) {
-      userLeave(socket.id);
       const initialRoom = Object.keys(socket.rooms)[1];
+      if (initialRoom === room) {
+        return;
+      }
+      userLeave(socket.id);
       socket.leave(initialRoom);
     }
 
@@ -96,32 +101,55 @@ io.on("connection", (socket) => {
       userName: recepient.displayName,
     });
 
-    //Broadcast when a user connects
-    // socket.broadcast
-    //   .to(user.room)
-    //   .emit(
-    //     "message",
-    //     formatMessage(botName, `${user.displayName} has joined the chat`)
-    //   );
+    //create a new room
+    try {
+      const room = await Room.find({ roomId: user.room }).lean();
+      if (room.length === 0) {
+        await Room.create({ roomId: user.room });
+      } else {
+        Room.findOne({ roomId: user.room })
+          .populate("messages")
+          .exec((err, messages) => {
+            socket.emit("initialMessages", {
+              messages: messages.messages,
+            });
+          });
+      }
+    } catch (err) {
+      // return res.json("Servor error");
+      return;
+    }
   });
 
   //Listen for chatMessage
-  socket.on("chatMessage", (msg) => {
+  socket.on("chatMessage", async (msg) => {
     const user = getCurrentUser(socket.id);
-    io.to(user.room).emit("message", formatMessage(user.displayName, msg));
+
+    io.to(user.room).emit("message", {
+      message: formatMessage(user.displayName, msg),
+      sentId: user.userId,
+    });
+
+    const message = new Message({
+      text: msg,
+      sender: user.userId,
+      senderName: user.displayName,
+    });
+
+    await message.save(async (err, message) => {
+      if (err) {
+        return console.log(err);
+      }
+      try {
+        await Room.updateOne(
+          { roomId: user.room },
+          { $push: { messages: message } }
+        );
+      } catch (err) {
+        return console.log(error);
+      }
+    });
   });
-
-  //Runs when client disconnects
-  // socket.on("disconnect", () => {
-  //   const user = userLeave(socket.id);
-
-  //   if (user) {
-  //     io.to(user.room).emit(
-  //       "message",
-  //       formatMessage(botName, `${user.displayName} has left the chat`)
-  //     );
-  //   }
-  // });
 });
 
 const PORT = process.env.PORT || 3000;
