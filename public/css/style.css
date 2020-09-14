@@ -186,10 +186,18 @@ body {
   #left-side {
   }
 
+  #contacts {
+    height: 60vh;
+  }
+
   .right-side {
   }
 
   #chat {
     height: 40vh;
+  }
+
+  .message {
+    width: 80%;
   }
 }
