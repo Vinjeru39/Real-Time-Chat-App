@@ -5,10 +5,17 @@ const chatLink = document.getElementsByClassName("contact-link");
 const socket = io();
 let userId;
 let recepientId;
+const leftSide = document.getElementById("left-side");
+const rightSide = document.querySelector(".right-side");
 
 if (window.innerWidth <= 800) {
-  document.querySelector(".right-side").classList.add("invisible");
+  rightSide.classList.add("invisible");
 }
+
+document.getElementById("back").addEventListener("click", () => {
+  leftSide.classList.toggle("invisible");
+  rightSide.classList.toggle("invisible");
+});
 
 for (let i = 0; i < chatLink.length; i++) {
   chatLink[i].addEventListener("click", function () {
@@ -18,9 +25,8 @@ for (let i = 0; i < chatLink.length; i++) {
     }
 
     if (window.innerWidth <= 800) {
-      document.getElementById("left-side").classList.toggle("invisible");
-      document.querySelector(".right-side").classList.toggle("invisible");
-      console.log(document.querySelector(".right-side").classList);
+      leftSide.classList.toggle("invisible");
+      rightSide.classList.toggle("invisible");
     }
 
     let room = this.getAttribute("href");

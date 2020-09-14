@@ -171,7 +171,7 @@ body {
 }
 
 @media screen and (max-width: 800px) {
-  #none {
+  #back {
     display: block;
   }
 
@@ -187,5 +187,9 @@ body {
   }
 
   .right-side {
+  }
+
+  #chat {
+    height: 40vh;
   }
 }
