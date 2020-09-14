@@ -119,6 +119,10 @@ body {
   border-top: none;
 }
 
+#back {
+  display: none;
+}
+
 #chat {
   height: 350px;
   padding: 30px;
@@ -164,4 +168,24 @@ body {
 .sender-message {
   background-color: var(--clr-sender-message);
   margin-left: 20px;
+}
+
+@media screen and (max-width: 800px) {
+  #none {
+    display: block;
+  }
+
+  .invisible {
+    display: none;
+  }
+
+  #main-container {
+    display: block;
+  }
+
+  #left-side {
+  }
+
+  .right-side {
+  }
 }

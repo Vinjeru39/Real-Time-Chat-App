@@ -6,12 +6,23 @@ const socket = io();
 let userId;
 let recepientId;
 
+if (window.innerWidth <= 800) {
+  document.querySelector(".right-side").classList.add("invisible");
+}
+
 for (let i = 0; i < chatLink.length; i++) {
   chatLink[i].addEventListener("click", function () {
     if (document.getElementById("msg").hasAttribute("disabled")) {
       document.getElementById("msg").removeAttribute("disabled");
       document.getElementById("submit-btn").removeAttribute("disabled");
     }
+
+    if (window.innerWidth <= 800) {
+      document.getElementById("left-side").classList.toggle("invisible");
+      document.querySelector(".right-side").classList.toggle("invisible");
+      console.log(document.querySelector(".right-side").classList);
+    }
+
     let room = this.getAttribute("href");
     let parts = room.split("AND");
     parts[0] = parts[0].split("").slice(1).join("");
