@@ -28,7 +28,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-dotenv.config({ path: "./config/config.env" });
+// dotenv.config({ path: "./config/config.env" });
+dotenv.config();
 require("./config/passport")(passport);
 
 connectDB();
